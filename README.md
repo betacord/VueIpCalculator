@@ -1,4 +1,4 @@
-# ip-calc
+# IP Calculator
 
 ## Project setup
 ```
