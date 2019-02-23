@@ -41,6 +41,8 @@
 </template>
 
 <script>
+    import axios from "axios";
+
     export default {
         name: "Calculator",
         data() {
@@ -50,7 +52,8 @@
                 mask: 0,
                 netAddress: null,
                 broadcastAddress: null,
-                countOfHosts: null
+                countOfHosts: null,
+                endpoint: 'http://localhost:3000'
             }
         },
         methods: {
@@ -63,7 +66,8 @@
                 if (this.ip === '') {
                     this.errors.push({
                         field: 'ip',
-                        text: 'IP address is required'})
+                        text: 'IP address is required'
+                    })
                 }
 
                 if (this.mask === 0) {
@@ -76,9 +80,14 @@
                 e.preventDefault();
             },
             getScores() {
-                this.netAddress = '192.168.1.0';
-                this.broadcastAddress = '192.168.1.255';
-                this.countOfHosts = 254;
+                axios.get(`${this.endpoint}/networks?ip=${this.ip}&mask=${this.mask}`)
+                    .then(res => {
+                        this.netAddress = res.data.network;
+                        this.broadcastAddress = res.data.broadcast;
+                        this.countOfHosts = res.data.count;
+                    }).catch(err => {
+                        alert(err);
+                })
             }
         }
     }
